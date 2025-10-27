@@ -1,7 +1,7 @@
-package com.moyeoit.domain.app_user.controller;
+package com.moyeoit.domain.job.presentation;
 
-import com.moyeoit.domain.app_user.service.JobService;
-import com.moyeoit.domain.app_user.service.dto.JobsDto;
+import com.moyeoit.domain.job.application.JobService;
+import com.moyeoit.domain.job.application.dto.JobsDto;
 import com.moyeoit.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

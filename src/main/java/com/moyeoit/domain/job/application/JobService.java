@@ -1,12 +1,13 @@
-package com.moyeoit.domain.app_user.service;
+package com.moyeoit.domain.job.application;
 
-import com.moyeoit.domain.app_user.domain.Job;
-import com.moyeoit.domain.app_user.repository.JobRepository;
-import com.moyeoit.domain.app_user.service.dto.JobsDto;
-import java.util.List;
+import com.moyeoit.domain.job.application.dto.JobsDto;
+import com.moyeoit.domain.job.domain.entity.Job;
+import com.moyeoit.domain.job.domain.repository.JobRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j

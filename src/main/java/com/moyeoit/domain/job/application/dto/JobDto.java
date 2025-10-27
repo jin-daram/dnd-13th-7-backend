@@ -1,6 +1,6 @@
-package com.moyeoit.domain.app_user.service.dto;
+package com.moyeoit.domain.job.application.dto;
 
-import com.moyeoit.domain.app_user.domain.Job;
+import com.moyeoit.domain.job.domain.entity.Job;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
