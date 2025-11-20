@@ -1,46 +1,35 @@
 package com.moyeoit.domain.review.domain;
 
-import com.moyeoit.domain.app_user.domain.AppUser;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
+import com.moyeoit.global.base.BaseEntity;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewLike {
+@Table(name = "tb_review_like",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_review_like_user_review",
+                        columnNames = {"user_id", "review_id"}
+                )
+        })
+public class ReviewLike extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "app_user_id", nullable = false)
-    private AppUser appUser;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @Column(name = "review_id", nullable = false)
     private Long reviewId;
 
-    @CreationTimestamp
-    @Column(name = "create_date", columnDefinition = "DATETIME(6) DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createDate;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "review_type", nullable = false)
-    private ReviewType reviewType;
 }

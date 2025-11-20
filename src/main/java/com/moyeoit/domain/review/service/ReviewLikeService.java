@@ -1,58 +1,34 @@
 package com.moyeoit.domain.review.service;
 
-
-import com.moyeoit.domain.app_user.domain.AppUser;
-import com.moyeoit.domain.app_user.repository.AppUserRepository;
 import com.moyeoit.domain.review.controller.response.ReviewLikeResponse;
-import com.moyeoit.domain.review.domain.ReviewLike;
-import com.moyeoit.domain.review.domain.ReviewType;
-import com.moyeoit.domain.review.repository.BasicReviewRepository;
-import com.moyeoit.domain.review.repository.PremiumReviewRepository;
-import com.moyeoit.domain.review.repository.ReviewLikeRepository;
+import com.moyeoit.domain.review.domain.model.Review;
+import com.moyeoit.domain.review.domain.service.ReviewLikeToggleManager;
+import com.moyeoit.domain.review.infra.ReviewRepository;
+import com.moyeoit.domain.user.domain.User;
+import com.moyeoit.domain.user.domain.repository.UserRepository;
 import com.moyeoit.global.exception.AppException;
+import com.moyeoit.global.exception.code.ReviewErrorCode;
 import com.moyeoit.global.exception.code.UserErrorCode;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class ReviewLikeService {
 
-    private final ReviewLikeRepository reviewLikeRepository;
-    private final AppUserRepository appUserRepository;
-    private final BasicReviewRepository basicReviewRepository;
-    private final PremiumReviewRepository premiumReviewRepository;
+    private final ReviewLikeToggleManager reviewLikeToggleManager;
 
-    @Transactional
-    public ReviewLikeResponse toggleLike(Long reviewId, String reviewType, Long userId) {
-        ReviewType type = ReviewType.fromString(reviewType);
-        AppUser user = appUserRepository.findById(userId).orElseThrow(() -> new AppException(UserErrorCode.NOT_FOUND));
+    private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository;
 
-        Optional<ReviewLike> existingLike = reviewLikeRepository.findReviewLikeByAppUserAndReviewIdAndReviewType(user, reviewId, type);
+    public ReviewLikeResponse toggleLike(Long userId, Long reviewId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(UserErrorCode.NOT_FOUND));
 
-        boolean liked = existingLike
-                .map(like -> false)
-                .orElseGet(() -> {
-                    ReviewLike reviewLike = ReviewLike.builder()
-                            .appUser(user)
-                            .reviewId(reviewId)
-                            .reviewType(type)
-                            .build();
-                    reviewLikeRepository.save(reviewLike);
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new AppException(ReviewErrorCode.NOT_FOUND));
 
-                    if (type == ReviewType.BASIC) {
-                        basicReviewRepository.plusLikeCount(reviewId);
-                    }
-                    if(type == ReviewType.PREMIUM){
-                        premiumReviewRepository.plusLikeCount(reviewId);
-                    }
-                    return true;
-                });
-
-        int likeCount = reviewLikeRepository.countByReviewIdAndReviewType(reviewId, type);
-
-        return new ReviewLikeResponse(liked, likeCount);
+        return reviewLikeToggleManager.toggle(review, user);
     }
+
 }
